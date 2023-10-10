@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "682220574902",
+    "project_id": "taskhub-2012d",
+    "storage_bucket": "taskhub-2012d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:682220574902:android:1fcaa014417ae8b9d1ee17",
+        "android_client_info": {
+          "package_name": "com.artempetrushenko.taskhub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "682220574902-90hpva6ln2uc839fah0ubugm8ergldlg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.artempetrushenko.taskhub",
+            "certificate_hash": "04f5542ca6df8d5a39438005ec40614129b387ff"
+          }
+        },
+        {
+          "client_id": "682220574902-772dmhg11hv5g4jskm9vpo589g283hnh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8LDhdql6s--v9HrGXEjT9Kxmh3DGS-Dk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "682220574902-772dmhg11hv5g4jskm9vpo589g283hnh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "682220574902-4pvuptmnh2p2gt28444rpmp3oeltq4c2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.artempetrushenko.taskhub"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
