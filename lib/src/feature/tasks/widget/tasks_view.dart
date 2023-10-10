@@ -22,110 +22,99 @@ class TasksView extends StatelessWidget {
         body: Center(
           child: state.map(
             loading: (state) => const CircularProgressIndicator(),
-            success: (state) =>
-                CustomScrollView(
-                  slivers: [
-                    const SliverAppBar(
-                      title: Text('TaskHub'),
-                    ),
-                    SliverList.builder(
-                      itemCount: state.tasks.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (index >= state.tasks.length - 1) {
-                          context.read<TasksBloc>().add(TasksEvent.fetchTasks(
-                              taskId: state.tasks[index].taskId));
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Dismissible(
-                            key: Key(state.tasks[index].taskId),
-                            onDismissed: (direction) {
-                              HapticFeedback.vibrate();
-                              bloc.add(
-                                TasksEvent.removeTask(
-                                  taskId: state.tasks[index].taskId,
-                                ),
-                              );
-                            },
-                            direction: DismissDirection.endToStart,
-                            background: Container(
-                              decoration: BoxDecoration(
-                                color: Theme
-                                    .of(context)
-                                    .colorScheme
-                                    .error,
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(16.0),
-                                ),
-                              ),
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 4.0),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0),
-                              alignment: Alignment.centerRight,
-                              child: Icon(
-                                Icons.delete_outline_rounded,
-                                color: Theme
-                                    .of(context)
-                                    .colorScheme
-                                    .onError,
-                              ),
+            success: (state) => CustomScrollView(
+              slivers: [
+                const SliverAppBar(
+                  title: Text('TaskHub'),
+                ),
+                SliverList.builder(
+                  itemCount: state.tasks.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index >= state.tasks.length - 1) {
+                      context.read<TasksBloc>().add(TasksEvent.fetchTasks(
+                          taskId: state.tasks[index].taskId));
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Dismissible(
+                        key: Key(state.tasks[index].taskId),
+                        onDismissed: (direction) {
+                          HapticFeedback.vibrate();
+                          bloc.add(
+                            TasksEvent.removeTask(
+                              taskId: state.tasks[index].taskId,
                             ),
-                            child: GestureDetector(
-                              onTap: () {
-                                HapticFeedback.vibrate();
-                                Navigator.pushNamed(
-                                  context,
-                                  RouteNames.task,
-                                  arguments: state.tasks[index].taskId,
-                                );
-                              },
-                              child: Card(
-                                elevation: 0.0,
-                                color: Theme
-                                    .of(context)
-                                    .colorScheme
-                                    .surfaceVariant,
-                                child: ListTile(
-                                  title: Text(
-                                    state.tasks[index].title,
-                                    style: TextStyle(
-                                      decoration: state.tasks[index].completed
-                                          ? TextDecoration.lineThrough
-                                          : null,
+                          );
+                        },
+                        direction: DismissDirection.endToStart,
+                        background: Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.error,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(16.0),
+                            ),
+                          ),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 4.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          alignment: Alignment.centerRight,
+                          child: Icon(
+                            Icons.delete_outline_rounded,
+                            color: Theme.of(context).colorScheme.onError,
+                          ),
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            HapticFeedback.vibrate();
+                            Navigator.pushNamed(
+                              context,
+                              RouteNames.task,
+                              arguments: state.tasks[index].taskId,
+                            );
+                          },
+                          child: Card(
+                            elevation: 0.0,
+                            color: Theme.of(context).colorScheme.surfaceVariant,
+                            child: ListTile(
+                              title: Text(
+                                state.tasks[index].title,
+                                style: TextStyle(
+                                  decoration: state.tasks[index].completed
+                                      ? TextDecoration.lineThrough
+                                      : null,
+                                ),
+                              ),
+                              subtitle: Text(state.tasks[index].category),
+                              trailing: IconButton(
+                                onPressed: () {
+                                  bloc.add(
+                                    TasksEvent.updateTask(
+                                      taskId: state.tasks[index].taskId,
+                                      value: !state.tasks[index].completed,
                                     ),
-                                  ),
-                                  subtitle: Text(state.tasks[index].category),
-                                  trailing: IconButton(
-                                    onPressed: () {
-                                      bloc.add(
-                                        TasksEvent.updateTask(
-                                          taskId: state.tasks[index].taskId,
-                                          value: !state.tasks[index].completed,
-                                        ),
-                                      );
-                                    },
-                                    icon: Icon(
-                                      state.tasks[index].completed
-                                          ? Icons.check_circle_outline
-                                          : Icons.circle_outlined,
-                                    ),
-                                  ),
+                                  );
+                                },
+                                icon: Icon(
+                                  state.tasks[index].completed
+                                      ? Icons.check_circle_outline
+                                      : Icons.circle_outlined,
                                 ),
                               ),
                             ),
                           ),
-                        );
-                      },
-                    ),
-                    if (!state.hasReachedMax)
-                      const SliverToBoxAdapter(
-                        child: Center(
-                          child: CircularProgressIndicator(),
                         ),
-                      )
-                  ],
+                      ),
+                    );
+                  },
                 ),
+                if (!state.hasReachedMax)
+                  const SliverToBoxAdapter(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+              ],
+            ),
             empty: (state) => const Text('Empty'),
             failure: (state) => const Text('Failure'),
           ),
@@ -134,7 +123,8 @@ class TasksView extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             HapticFeedback.vibrate();
-            final task = await Navigator.pushNamed(context, RouteNames.creator) as TaskModel?;
+            final task = await Navigator.pushNamed(context, RouteNames.creator)
+                as TaskModel?;
             if (task == null) return;
             context.read<TasksBloc>().add(TasksEvent.addTask(task: task));
           },
@@ -147,9 +137,9 @@ class TasksView extends StatelessWidget {
                   onPressed: () async {
                     try {
                       final GoogleSignInAccount? googleUser =
-                      await GoogleSignIn().signIn();
+                          await GoogleSignIn().signIn();
                       final GoogleSignInAuthentication? googleAuth =
-                      await googleUser?.authentication;
+                          await googleUser?.authentication;
                       final credential = GoogleAuthProvider.credential(
                         accessToken: googleAuth?.accessToken,
                         idToken: googleAuth?.idToken,
@@ -162,6 +152,7 @@ class TasksView extends StatelessWidget {
             ],
           ),
         ),
-      ),);
+      ),
+    );
   }
 }

@@ -23,6 +23,58 @@ class App extends StatelessWidget {
           disabledElevation: 0.0,
           highlightElevation: 0.0,
         ),
+        inputDecorationTheme: InputDecorationTheme(
+          fillColor: Colors.amber.shade50,
+          filled: true,
+          errorBorder: UnderlineInputBorder(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(8.0),
+              topRight: Radius.circular(8.0),
+            ),
+            borderSide: BorderSide(
+              width: 2.0,
+              color: Colors.red.shade900,
+            ),
+          ),
+          focusedBorder: const UnderlineInputBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8.0),
+              topRight: Radius.circular(8.0),
+            ),
+          ),
+          focusedErrorBorder: UnderlineInputBorder(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(8.0),
+              topRight: Radius.circular(8.0),
+            ),
+            borderSide: BorderSide(
+              width: 2.0,
+              color: Colors.red.shade900,
+            ),
+          ),
+          disabledBorder: UnderlineInputBorder(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(8.0),
+              topRight: Radius.circular(8.0),
+            ),
+            borderSide: BorderSide(
+              width: 2.0,
+              color: Colors.red.shade900,
+            ),
+          ),
+          enabledBorder: const UnderlineInputBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8.0),
+              topRight: Radius.circular(8.0),
+            ),
+          ),
+          border: const UnderlineInputBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8.0),
+              topRight: Radius.circular(8.0),
+            ),
+          ),
+        ),
       ),
       routes: _navigation.routes,
       onGenerateRoute: _navigation.onGenerateRoute,
