@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:taskhub/src/common/model/task/task_model.dart';
 
+import 'package:taskhub/src/common/model/task/task_model.dart';
 import 'package:taskhub/src/feature/tasks/bloc/tasks_bloc.dart';
 import 'package:taskhub/src/common/widget/navigation/navigation.dart';
 
@@ -68,8 +69,8 @@ class TasksView extends StatelessWidget {
                             HapticFeedback.vibrate();
                             Navigator.pushNamed(
                               context,
-                              RouteNames.task,
-                              arguments: state.tasks[index].taskId,
+                              RouteNames.editor,
+                              arguments: state.tasks[index],
                             );
                           },
                           child: Card(

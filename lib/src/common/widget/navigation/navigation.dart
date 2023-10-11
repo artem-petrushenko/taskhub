@@ -5,19 +5,17 @@ import 'package:taskhub/src/common/data/repository/tasks/tasks_repository_impl.d
 
 import 'package:taskhub/src/common/data/client/cloud_firestore.dart';
 import 'package:taskhub/src/common/data/provider/tasks/remote/tasks_network_data_provider_impl.dart';
+import 'package:taskhub/src/common/model/task/task_model.dart';
 import 'package:taskhub/src/feature/creator/bloc/creator_bloc.dart';
 import 'package:taskhub/src/feature/creator/widget/creator_view.dart';
 import 'package:taskhub/src/feature/editor/bloc/editor_bloc.dart';
 import 'package:taskhub/src/feature/editor/widget/editor_view.dart';
-import 'package:taskhub/src/feature/task/bloc/task_bloc.dart';
-import 'package:taskhub/src/feature/task/widget/task_view.dart';
 import 'package:taskhub/src/feature/tasks/bloc/tasks_bloc.dart';
 import 'package:taskhub/src/feature/tasks/widget/tasks_view.dart';
 
 abstract class RouteNames {
   static const tasks = '/';
-  static const task = '/task';
-  static const editor = '/task/editor';
+  static const editor = '/editor';
   static const creator = '/creator';
 }
 
@@ -30,17 +28,11 @@ class Navigation {
 
   Route<Object> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case RouteNames.task:
-        final arguments = settings.arguments;
-        final taskId = arguments is String ? arguments : '';
-        return MaterialPageRoute(
-          builder: (_) => _screenFactory.makeTask(taskId: taskId),
-        );
       case RouteNames.editor:
         final arguments = settings.arguments;
-        final taskId = arguments is String ? arguments : '';
+        final task = arguments is TaskModel ? arguments : '';
         return MaterialPageRoute(
-          builder: (_) => _screenFactory.makeEditor(taskId: taskId),
+          builder: (_) => _screenFactory.makeEditor(task: task as TaskModel),
         );
       default:
         const widget = Text("Navigation Error");
@@ -64,7 +56,7 @@ class ScreenFactory {
   }
 
   Widget makeEditor({
-    required String taskId,
+    required TaskModel task,
   }) {
     return BlocProvider<EditorBloc>(
       create: (_) => EditorBloc(
@@ -74,7 +66,7 @@ class ScreenFactory {
           ),
         ),
       ),
-      child: EditorView(taskId: taskId),
+      child: EditorView(task: task),
     );
   }
 
@@ -88,21 +80,6 @@ class ScreenFactory {
         ),
       ),
       child: const CreatorView(),
-    );
-  }
-
-  Widget makeTask({
-    required String taskId,
-  }) {
-    return BlocProvider<TaskBloc>(
-      create: (_) => TaskBloc(
-        tasksRepository: const TasksRepositoryImpl(
-          tasksNetworkDataProviderImpl: TasksNetworkDataProviderImpl(
-            cloudFirestore: CloudFirestore(),
-          ),
-        ),
-      )..add(TaskEvent.fetchTask(taskId: taskId)),
-      child: TaskView(taskId: taskId),
     );
   }
 }
