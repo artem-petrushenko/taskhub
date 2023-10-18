@@ -8,9 +8,13 @@ class EditorState with _$EditorState {
 
   const factory EditorState.loading() = _Loading;
 
-  const factory EditorState.success({
+  const factory EditorState.successUpdate({
     required final TaskModel task,
-  }) = _Success;
+  }) = _SuccessUpdate;
+
+  const factory EditorState.successRemove({
+    required final String taskId,
+  }) = _SuccessRemove;
 
   const factory EditorState.failure({
     required final Object error,

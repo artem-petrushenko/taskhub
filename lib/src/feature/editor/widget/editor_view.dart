@@ -1,8 +1,11 @@
-import 'dart:developer';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:taskhub/src/common/model/task/task_model.dart';
+
+import 'package:taskhub/src/feature/editor/bloc/editor_bloc.dart';
 
 class EditorView extends StatefulWidget {
   final TaskModel task;
@@ -60,51 +63,90 @@ class _EditorViewState extends State<EditorView> {
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.task.taskId),
-        actions: [
-          IconButton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                if (hasTaskChanged()) {
-                  log('1');
+    return BlocListener<EditorBloc, EditorState>(
+      listener: (context, state) {
+        state.mapOrNull(
+          successRemove: (state) {
+            Navigator.pop(context, state.taskId);
+          },
+          successUpdate: (state) {
+            Navigator.pop(context, state.task);
+          },
+          failure: (state) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error.toString())),
+            );
+          },
+        );
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.task.taskId),
+          actions: [
+            IconButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  if (hasTaskChanged()) {
+                    context.read<EditorBloc>().add(
+                          EditorEvent.updateTask(
+                            task: widget.task.copyWith(
+                              category: categoryController.text,
+                              completed: false,
+                              description: descriptionController.text,
+                              dueDate: DateFormat.yMMMd()
+                                  .parse(dueDateController.text),
+                              priority: priorityController.text,
+                              title: nameController.text,
+                            ),
+                          ),
+                        );
+                  }
                 }
-              }
-            },
-            icon: const Icon(Icons.done),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Form(
-          key: formKey,
-          child: CustomScrollView(
-            slivers: [
-              SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    TitleTextFormField(nameController: nameController),
-                    DescriptionTextFormField(
-                        descriptionController: descriptionController),
-                    DueDateTextFormField(dueDateController: dueDateController),
-                    PriorityTextFormField(
-                        priorityController: priorityController),
-                    CategoryTextFormField(
-                        categoryController: categoryController),
-                    StatusCard(
-                      status: status,
-                      onStatusChanged: (newStatus) {
-                        setState(() {
-                          status = newStatus;
-                        });
-                      },
-                    ),
-                  ],
+              },
+              icon: const Icon(Icons.done),
+            ),
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Form(
+            key: formKey,
+            child: CustomScrollView(
+              slivers: [
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
+                      TitleTextFormField(nameController: nameController),
+                      DescriptionTextFormField(
+                          descriptionController: descriptionController),
+                      DueDateTextFormField(
+                          dueDateController: dueDateController),
+                      PriorityTextFormField(
+                          priorityController: priorityController),
+                      CategoryTextFormField(
+                          categoryController: categoryController),
+                      StatusCard(
+                        status: status,
+                        onStatusChanged: (newStatus) {
+                          setState(() {
+                            status = newStatus;
+                          });
+                        },
+                      ),
+                      FilledButton.tonal(
+                        onPressed: () {
+                          HapticFeedback.vibrate();
+                          context
+                              .read<EditorBloc>()
+                              .add(EditorEvent.removeTask(task: widget.task));
+                        },
+                        child: const Text('Remove'),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

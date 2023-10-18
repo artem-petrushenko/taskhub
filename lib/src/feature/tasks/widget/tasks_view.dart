@@ -65,13 +65,22 @@ class TasksView extends StatelessWidget {
                           ),
                         ),
                         child: GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             HapticFeedback.vibrate();
-                            Navigator.pushNamed(
+                            final value = await Navigator.pushNamed(
                               context,
                               RouteNames.editor,
                               arguments: state.tasks[index],
                             );
+                            if (value == null) return;
+                            if (value is String) {
+                              context
+                                  .read<TasksBloc>()
+                                  .add(TasksEvent.removeTask(taskId: value));
+                            } else if (value is TaskModel) {
+                              context.read<TasksBloc>().add(
+                                  TasksEvent.updateReturnTask(task: value));
+                            }
                           },
                           child: Card(
                             elevation: 0.0,

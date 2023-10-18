@@ -26,6 +26,7 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
         removeTask: (event) => _onRemoveTask(event, emit),
         updateTask: (event) => _onUpdateTask(event, emit),
         addTask: (event) => _onAddTask(event, emit),
+        updateReturnTask: (event) => _updateReturnTask(event, emit),
       ),
       transformer: droppable(),
     );
@@ -121,6 +122,28 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
       } else {
         emit(_Success(tasks: [event.task], hasReachedMax: true));
       }
+    } on Object catch (error) {
+      emit(_Failure(error: error));
+      rethrow;
+    }
+  }
+
+  Future<void> _updateReturnTask(
+    _UpdateReturnedTask event,
+    Emitter<TasksState> emit,
+  ) async {
+    try {
+      final updatedTasks = (state as _Success).tasks.map((task) {
+        if (task.taskId == event.task.taskId) {
+          return task = event.task;
+        }
+        return task;
+      }).toList();
+
+      await _tasksRepository.updateTask(
+          task:
+          updatedTasks.singleWhere((task) => task.taskId == event.task.taskId));
+      emit((state as _Success).copyWith(tasks: updatedTasks));
     } on Object catch (error) {
       emit(_Failure(error: error));
       rethrow;

@@ -30,7 +30,10 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
     EditorEvent event,
     Emitter<EditorState> emit,
   ) async {
-    try {} on Object catch (error) {
+    try {
+      await _tasksRepository.updateTask(task: event.task);
+      emit(_SuccessUpdate(task: event.task));
+    } on Object catch (error) {
       emit(_Failure(error: error));
       rethrow;
     }
@@ -40,7 +43,10 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
     _RemoveTask event,
     Emitter<EditorState> emit,
   ) async {
-    try {} on Object catch (error) {
+    try {
+      await _tasksRepository.deleteTask(taskId: event.task.taskId);
+      emit(_SuccessRemove(taskId: event.task.taskId));
+    } on Object catch (error) {
       emit(_Failure(error: error));
       rethrow;
     }

@@ -5,7 +5,7 @@ class EditorEvent with _$EditorEvent {
   const EditorEvent._();
 
   const factory EditorEvent.removeTask({
-    required final String taskId,
+    required final TaskModel task,
   }) = _RemoveTask;
 
   const factory EditorEvent.updateTask({

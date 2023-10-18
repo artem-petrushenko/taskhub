@@ -20,4 +20,8 @@ class TasksEvent with _$TasksEvent {
     required final String taskId,
     required final bool value,
   }) = _UpdateTask;
+
+  const factory TasksEvent.updateReturnTask({
+    required final TaskModel task,
+  }) = _UpdateReturnedTask;
 }
