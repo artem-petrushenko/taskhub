@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:taskhub/src/common/model/task/task_model.dart';
+
 import 'package:taskhub/src/feature/editor/bloc/editor_bloc.dart';
+import 'package:taskhub/src/feature/editor/scope/editor_scope.dart';
 
 class EditorView extends StatefulWidget {
   final TaskModel task;
@@ -19,7 +21,6 @@ class EditorView extends StatefulWidget {
 }
 
 class _EditorViewState extends State<EditorView> {
-  // Initialize your controllers and state variables
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   late TextEditingController dueDateController;
@@ -30,7 +31,6 @@ class _EditorViewState extends State<EditorView> {
   @override
   void initState() {
     super.initState();
-    // Initialize the controllers and status
     nameController = TextEditingController(text: widget.task.title);
     descriptionController =
         TextEditingController(text: widget.task.description);
@@ -45,7 +45,6 @@ class _EditorViewState extends State<EditorView> {
 
   @override
   void dispose() {
-    // Dispose of the controllers when no longer needed
     nameController.dispose();
     descriptionController.dispose();
     dueDateController.dispose();
@@ -55,7 +54,6 @@ class _EditorViewState extends State<EditorView> {
   }
 
   bool hasTaskChanged() {
-    // Check if any field has been modified
     return nameController.text != widget.task.title ||
         descriptionController.text != widget.task.description ||
         dueDateController.text !=
@@ -122,32 +120,25 @@ class _EditorViewState extends State<EditorView> {
                               child: FilledButton.tonal(
                                 onPressed: state.mapOrNull(
                                   initial: (state) => () {
+                                    HapticFeedback.vibrate();
                                     if (formKey.currentState!.validate()) {
-                                      HapticFeedback.vibrate();
                                       if (hasTaskChanged()) {
-                                        context.read<EditorBloc>().add(
-                                              EditorEvent.updateTask(
-                                                task: widget.task.copyWith(
-                                                  category:
-                                                      categoryController.text,
-                                                  completed: status,
-                                                  description:
-                                                      descriptionController
-                                                          .text,
-                                                  dueDate: dueDateController
-                                                              .text !=
-                                                          ''
-                                                      ? DateFormat.yMMMd()
-                                                          .parse(
-                                                              dueDateController
-                                                                  .text)
-                                                      : null,
-                                                  priority:
-                                                      priorityController.text,
-                                                  title: nameController.text,
-                                                ),
-                                              ),
-                                            );
+                                        EditorScope.updateTask(
+                                          context,
+                                          widget.task.copyWith(
+                                            category: categoryController.text,
+                                            completed: status,
+                                            description:
+                                                descriptionController.text,
+                                            dueDate:
+                                                dueDateController.text != ''
+                                                    ? DateFormat.yMMMd().parse(
+                                                        dueDateController.text)
+                                                    : null,
+                                            priority: priorityController.text,
+                                            title: nameController.text,
+                                          ),
+                                        );
                                       } else {
                                         Navigator.pop(context);
                                       }
@@ -167,10 +158,8 @@ class _EditorViewState extends State<EditorView> {
                                 onPressed: state.mapOrNull(
                                   initial: (state) => () {
                                     HapticFeedback.vibrate();
-                                    context.read<EditorBloc>().add(
-                                          EditorEvent.removeTask(
-                                              taskId: widget.task.taskId),
-                                        );
+                                    EditorScope.removeTask(
+                                        context, widget.task.taskId);
                                   },
                                 ),
                                 child: Text(
@@ -219,6 +208,7 @@ class StatusCard extends StatelessWidget {
           icon:
               Icon(status ? Icons.check_circle_outline : Icons.circle_outlined),
           onPressed: () {
+            HapticFeedback.vibrate();
             onStatusChanged(!status);
           },
         ),

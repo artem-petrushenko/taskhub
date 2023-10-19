@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -8,6 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:taskhub/src/common/model/task/task_model.dart';
 import 'package:taskhub/src/feature/tasks/bloc/tasks_bloc.dart';
 import 'package:taskhub/src/common/widget/navigation/navigation.dart';
+import 'package:taskhub/src/feature/tasks/scope/tasks_scope.dart';
 
 class TasksView extends StatelessWidget {
   const TasksView({super.key});
@@ -15,25 +18,22 @@ class TasksView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.select((TasksBloc bloc) => bloc.state);
-    final bloc = context.select((TasksBloc bloc) => bloc);
     return RefreshIndicator(
-      onRefresh: () async =>
-          context.read<TasksBloc>().add(const TasksEvent.fetchTasks()),
+      onRefresh: () async => TasksScope.fetchTasks(context, null),
       child: Scaffold(
+        appBar: AppBar(
+          title: const Text('TaskHub'),
+        ),
         body: Center(
           child: state.map(
             loading: (state) => const CircularProgressIndicator(),
             success: (state) => CustomScrollView(
               slivers: [
-                const SliverAppBar(
-                  title: Text('TaskHub'),
-                ),
                 SliverList.builder(
                   itemCount: state.tasks.length,
                   itemBuilder: (BuildContext context, int index) {
                     if (index >= state.tasks.length - 1) {
-                      context.read<TasksBloc>().add(TasksEvent.fetchTasks(
-                          taskId: state.tasks[index].taskId));
+                      TasksScope.fetchTasks(context, state.tasks[index].taskId);
                     }
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -41,11 +41,8 @@ class TasksView extends StatelessWidget {
                         key: Key(state.tasks[index].taskId),
                         onDismissed: (direction) {
                           HapticFeedback.vibrate();
-                          bloc.add(
-                            TasksEvent.removeTask(
-                              taskId: state.tasks[index].taskId,
-                            ),
-                          );
+                          TasksScope.removeTask(
+                              context, state.tasks[index].taskId);
                         },
                         direction: DismissDirection.endToStart,
                         background: Container(
@@ -67,20 +64,20 @@ class TasksView extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () async {
                             HapticFeedback.vibrate();
-                            final value = await Navigator.pushNamed(
+                            Navigator.pushNamed(
                               context,
                               RouteNames.editor,
                               arguments: state.tasks[index],
+                            ).then(
+                              (value) {
+                                if (value == null) return;
+                                if (value is String) {
+                                  TasksScope.removeTask(context, value);
+                                } else if (value is TaskModel) {
+                                  TasksScope.updateReturnTask(context, value);
+                                }
+                              },
                             );
-                            if (value == null) return;
-                            if (value is String) {
-                              context
-                                  .read<TasksBloc>()
-                                  .add(TasksEvent.removeTask(taskId: value));
-                            } else if (value is TaskModel) {
-                              context.read<TasksBloc>().add(
-                                  TasksEvent.updateReturnTask(task: value));
-                            }
                           },
                           child: Card(
                             elevation: 0.0,
@@ -98,11 +95,10 @@ class TasksView extends StatelessWidget {
                               trailing: IconButton(
                                 onPressed: () {
                                   HapticFeedback.vibrate();
-                                  bloc.add(
-                                    TasksEvent.updateTask(
-                                      taskId: state.tasks[index].taskId,
-                                      value: !state.tasks[index].completed,
-                                    ),
+                                  TasksScope.updateTask(
+                                    context,
+                                    state.tasks[index].taskId,
+                                    !state.tasks[index].completed,
                                   );
                                 },
                                 icon: Icon(
@@ -134,10 +130,10 @@ class TasksView extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             HapticFeedback.vibrate();
-            final task = await Navigator.pushNamed(context, RouteNames.creator)
-                as TaskModel?;
-            if (task == null) return;
-            context.read<TasksBloc>().add(TasksEvent.addTask(task: task));
+            Navigator.pushNamed(context, RouteNames.creator).then((task) {
+              if (task == null) return;
+              TasksScope.addTask(context, task as TaskModel);
+            });
           },
           child: const Icon(Icons.create),
         ),
@@ -157,7 +153,9 @@ class TasksView extends StatelessWidget {
                       );
                       await FirebaseAuth.instance
                           .signInWithCredential(credential);
-                    } catch (e) {}
+                    } on Object catch (error) {
+                      log(error.toString());
+                    }
                   },
                   icon: const Icon(Icons.add)),
             ],

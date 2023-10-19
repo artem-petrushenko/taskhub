@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:taskhub/src/common/model/task/task_model.dart';
 import 'package:taskhub/src/feature/creator/bloc/creator_bloc.dart';
+import 'package:taskhub/src/feature/creator/scope/creator_scope.dart';
 
 class CreatorView extends StatefulWidget {
   const CreatorView({super.key});
@@ -49,15 +50,15 @@ class _CreatorViewState extends State<CreatorView> {
                       category: categoryController.text,
                       completed: false,
                       description: descriptionController.text,
-                      dueDate: dueDateController.text != '' ? DateFormat.yMMMd().parse(dueDateController.text) : null,
+                      dueDate: dueDateController.text != ''
+                          ? DateFormat.yMMMd().parse(dueDateController.text)
+                          : null,
                       priority: priorityController.text,
                       taskId: '',
                       title: nameController.text,
                       uid: '',
                     );
-                    context
-                        .read<CreatorBloc>()
-                        .add(CreatorEvent.createTask(task: newTask));
+                    CreatorScope.removeTask(context, newTask);
                   }
                 },
               ),
