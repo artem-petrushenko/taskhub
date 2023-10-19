@@ -12,7 +12,7 @@ class TaskModel with _$TaskModel {
     required final String category,
     required final bool completed,
     required final String description,
-    required final DateTime dueDate,
+    final DateTime? dueDate,
     required final String priority,
     required final String taskId,
     required final String title,
@@ -29,7 +29,9 @@ class TaskModel with _$TaskModel {
       uid: data!['uid'] as String,
       category: data['category'] as String,
       description: data['description'] as String,
-      dueDate: (data['due_date'] as Timestamp).toDate(),
+      dueDate: data['due_date'] != null
+          ? (data['due_date'] as Timestamp).toDate()
+          : null,
       priority: data['priority'] as String,
       taskId: data['task_id'] as String,
       title: data['title'] as String,

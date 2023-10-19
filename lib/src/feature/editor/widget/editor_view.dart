@@ -35,7 +35,9 @@ class _EditorViewState extends State<EditorView> {
     descriptionController =
         TextEditingController(text: widget.task.description);
     dueDateController = TextEditingController(
-        text: DateFormat.yMMMd().format(widget.task.dueDate));
+        text: widget.task.dueDate != null
+            ? DateFormat.yMMMd().format(widget.task.dueDate!)
+            : '');
     categoryController = TextEditingController(text: widget.task.category);
     priorityController = TextEditingController(text: widget.task.priority);
     status = widget.task.completed;
@@ -57,7 +59,9 @@ class _EditorViewState extends State<EditorView> {
     return nameController.text != widget.task.title ||
         descriptionController.text != widget.task.description ||
         dueDateController.text !=
-            DateFormat.yMMMd().format(widget.task.dueDate) ||
+            (widget.task.dueDate != null
+                ? DateFormat.yMMMd().format(widget.task.dueDate!)
+                : '') ||
         categoryController.text != widget.task.category ||
         priorityController.text != widget.task.priority ||
         status != widget.task.completed;
@@ -130,9 +134,14 @@ class _EditorViewState extends State<EditorView> {
                                                   description:
                                                       descriptionController
                                                           .text,
-                                                  dueDate: DateFormat.yMMMd()
-                                                      .parse(dueDateController
-                                                          .text),
+                                                  dueDate: dueDateController
+                                                              .text !=
+                                                          ''
+                                                      ? DateFormat.yMMMd()
+                                                          .parse(
+                                                              dueDateController
+                                                                  .text)
+                                                      : null,
                                                   priority:
                                                       priorityController.text,
                                                   title: nameController.text,
@@ -508,7 +517,7 @@ class DueDateTextFormField extends StatelessWidget {
           showCursor: false,
           readOnly: true,
           validator: (String? value) {
-            if (value != null) {
+            if (value != null && value != '') {
               final now = DateTime.now();
               final selectedDate = DateFormat.yMMMd().parse(value);
               if (selectedDate.isBefore(now)) {

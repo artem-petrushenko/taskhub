@@ -117,7 +117,17 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
       if (state is _Success) {
         List<TaskModel> list = List.from((state as _Success).tasks)
           ..add(event.task)
-          ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
+          ..sort((a, b) {
+            if (a.dueDate == null && b.dueDate == null) {
+              return 0; // Both dates are null, consider them equal.
+            } else if (a.dueDate == null) {
+              return 1; // 'a' is null, so 'b' comes before 'a'.
+            } else if (b.dueDate == null) {
+              return -1; // 'b' is null, so 'a' comes before 'b'.
+            } else {
+              return a.dueDate!.compareTo(b.dueDate!); // Compare non-null dates.
+            }
+          });
         emit((state as _Success).copyWith(tasks: list));
       } else {
         emit(_Success(tasks: [event.task], hasReachedMax: true));

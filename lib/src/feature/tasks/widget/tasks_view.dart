@@ -97,6 +97,7 @@ class TasksView extends StatelessWidget {
                               subtitle: Text(state.tasks[index].category),
                               trailing: IconButton(
                                 onPressed: () {
+                                  HapticFeedback.vibrate();
                                   bloc.add(
                                     TasksEvent.updateTask(
                                       taskId: state.tasks[index].taskId,

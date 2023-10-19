@@ -41,7 +41,8 @@ class TasksNetworkDataProviderImpl implements TasksNetworkDataProvider {
       'category': task.category,
       'completed': false,
       'description': task.description,
-      'due_date': Timestamp.fromDate(task.dueDate),
+      'due_date':
+          task.dueDate != null ? Timestamp.fromDate(task.dueDate!) : null,
       'priority': task.priority,
       'task_id': document.id,
       'title': task.title,
@@ -57,7 +58,8 @@ class TasksNetworkDataProviderImpl implements TasksNetworkDataProvider {
       'category': task.category,
       'completed': task.completed,
       'description': task.description,
-      'due_date': Timestamp.fromDate(task.dueDate),
+      'due_date':
+          task.dueDate != null ? Timestamp.fromDate(task.dueDate!) : null,
       'priority': task.priority,
       'task_id': task.taskId,
       'title': task.title,

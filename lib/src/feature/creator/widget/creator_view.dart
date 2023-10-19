@@ -49,7 +49,7 @@ class _CreatorViewState extends State<CreatorView> {
                       category: categoryController.text,
                       completed: false,
                       description: descriptionController.text,
-                      dueDate: DateFormat.yMMMd().parse(dueDateController.text),
+                      dueDate: dueDateController.text != '' ? DateFormat.yMMMd().parse(dueDateController.text) : null,
                       priority: priorityController.text,
                       taskId: '',
                       title: nameController.text,
@@ -296,9 +296,10 @@ class DueDateTextFormField extends StatelessWidget {
       showCursor: false,
       readOnly: true,
       validator: (String? value) {
-        if (value != null) {
+        if (value != null && value != '') {
           final now = DateTime.now();
-          if (DateFormat.yMMMd().parse(value).isBefore(now)) {
+          final selectedDate = DateFormat.yMMMd().parse(value);
+          if (selectedDate.isBefore(now)) {
             return 'Due date must be in the future.';
           }
         }
