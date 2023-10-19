@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,40 +37,31 @@ class _CreatorViewState extends State<CreatorView> {
         );
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           title: const Text('Task Creator'),
           actions: [
             TextButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  state.maybeMap(
-                    initial: (state) async {
-                      final newTask = TaskModel(
-                        category: categoryController.text,
-                        completed: false,
-                        description: descriptionController.text,
-                        dueDate:
-                            DateFormat.yMMMd().parse(dueDateController.text),
-                        priority: priorityController.text,
-                        taskId: '',
-                        title: nameController.text,
-                        uid: '',
-                      );
-                      context
-                          .read<CreatorBloc>()
-                          .add(CreatorEvent.createTask(task: newTask));
-                    },
-                    orElse: () => null,
-                  );
-                }
-              },
-              child: state.map(
-                initial: (state) => const Text('Create'),
-                loading: (state) => const Text('Loading'),
-                success: (state) => const Text('Loading'),
-                failure: (state) => const Text('Failure'),
+              onPressed: state.mapOrNull(
+                initial: (state) => () {
+                  if (formKey.currentState!.validate()) {
+                    HapticFeedback.vibrate();
+                    final newTask = TaskModel(
+                      category: categoryController.text,
+                      completed: false,
+                      description: descriptionController.text,
+                      dueDate: DateFormat.yMMMd().parse(dueDateController.text),
+                      priority: priorityController.text,
+                      taskId: '',
+                      title: nameController.text,
+                      uid: '',
+                    );
+                    context
+                        .read<CreatorBloc>()
+                        .add(CreatorEvent.createTask(task: newTask));
+                  }
+                },
               ),
+              child: const Text('Create'),
             ),
           ],
         ),
