@@ -1,10 +1,9 @@
 import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:taskhub/src/common/model/task/task_model.dart';
-
 import 'package:taskhub/src/feature/editor/bloc/editor_bloc.dart';
 
 class EditorView extends StatefulWidget {
@@ -20,16 +19,18 @@ class EditorView extends StatefulWidget {
 }
 
 class _EditorViewState extends State<EditorView> {
+  // Initialize your controllers and state variables
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   late TextEditingController dueDateController;
   late TextEditingController categoryController;
   late TextEditingController priorityController;
-  bool status = false;
+  late bool status;
 
   @override
   void initState() {
     super.initState();
+    // Initialize the controllers and status
     nameController = TextEditingController(text: widget.task.title);
     descriptionController =
         TextEditingController(text: widget.task.description);
@@ -42,6 +43,7 @@ class _EditorViewState extends State<EditorView> {
 
   @override
   void dispose() {
+    // Dispose of the controllers when no longer needed
     nameController.dispose();
     descriptionController.dispose();
     dueDateController.dispose();
@@ -51,6 +53,7 @@ class _EditorViewState extends State<EditorView> {
   }
 
   bool hasTaskChanged() {
+    // Check if any field has been modified
     return nameController.text != widget.task.title ||
         descriptionController.text != widget.task.description ||
         dueDateController.text !=
@@ -82,30 +85,6 @@ class _EditorViewState extends State<EditorView> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.task.taskId),
-          actions: [
-            IconButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  if (hasTaskChanged()) {
-                    context.read<EditorBloc>().add(
-                          EditorEvent.updateTask(
-                            task: widget.task.copyWith(
-                              category: categoryController.text,
-                              completed: false,
-                              description: descriptionController.text,
-                              dueDate: DateFormat.yMMMd()
-                                  .parse(dueDateController.text),
-                              priority: priorityController.text,
-                              title: nameController.text,
-                            ),
-                          ),
-                        );
-                  }
-                }
-              },
-              icon: const Icon(Icons.done),
-            ),
-          ],
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -114,36 +93,91 @@ class _EditorViewState extends State<EditorView> {
             child: CustomScrollView(
               slivers: [
                 SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      TitleTextFormField(nameController: nameController),
-                      DescriptionTextFormField(
-                          descriptionController: descriptionController),
-                      DueDateTextFormField(
-                          dueDateController: dueDateController),
-                      PriorityTextFormField(
-                          priorityController: priorityController),
-                      CategoryTextFormField(
-                          categoryController: categoryController),
-                      StatusCard(
-                        status: status,
-                        onStatusChanged: (newStatus) {
-                          setState(() {
-                            status = newStatus;
-                          });
-                        },
-                      ),
-                      FilledButton.tonal(
-                        onPressed: () {
-                          HapticFeedback.vibrate();
-                          context
-                              .read<EditorBloc>()
-                              .add(EditorEvent.removeTask(task: widget.task));
-                        },
-                        child: const Text('Remove'),
-                      ),
-                    ],
-                  ),
+                  delegate: SliverChildListDelegate([
+                    TitleTextFormField(nameController: nameController),
+                    DescriptionTextFormField(
+                        descriptionController: descriptionController),
+                    DueDateTextFormField(dueDateController: dueDateController),
+                    PriorityTextFormField(
+                        priorityController: priorityController),
+                    CategoryTextFormField(
+                        categoryController: categoryController),
+                    StatusCard(
+                      status: status,
+                      onStatusChanged: (newStatus) {
+                        setState(() {
+                          status = newStatus;
+                        });
+                      },
+                    ),
+                    BlocBuilder<EditorBloc, EditorState>(
+                      builder: (context, state) {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: FilledButton.tonal(
+                                onPressed: state.mapOrNull(
+                                  initial: (state) => () {
+                                    if (formKey.currentState!.validate()) {
+                                      HapticFeedback.vibrate();
+                                      if (hasTaskChanged()) {
+                                        context.read<EditorBloc>().add(
+                                              EditorEvent.updateTask(
+                                                task: widget.task.copyWith(
+                                                  category:
+                                                      categoryController.text,
+                                                  completed: status,
+                                                  description:
+                                                      descriptionController
+                                                          .text,
+                                                  dueDate: DateFormat.yMMMd()
+                                                      .parse(dueDateController
+                                                          .text),
+                                                  priority:
+                                                      priorityController.text,
+                                                  title: nameController.text,
+                                                ),
+                                              ),
+                                            );
+                                      } else {
+                                        Navigator.pop(context);
+                                      }
+                                    }
+                                  },
+                                ),
+                                child: const Text('Update'),
+                              ),
+                            ),
+                            const SizedBox(width: 16.0),
+                            Expanded(
+                              child: FilledButton.tonal(
+                                style: FilledButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.error,
+                                ),
+                                onPressed: state.mapOrNull(
+                                  initial: (state) => () {
+                                    HapticFeedback.vibrate();
+                                    context.read<EditorBloc>().add(
+                                          EditorEvent.removeTask(
+                                              taskId: widget.task.taskId),
+                                        );
+                                  },
+                                ),
+                                child: Text(
+                                  'Remove',
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.onError,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ]),
                 ),
               ],
             ),
@@ -154,7 +188,7 @@ class _EditorViewState extends State<EditorView> {
   }
 }
 
-class StatusCard extends StatefulWidget {
+class StatusCard extends StatelessWidget {
   final bool status;
   final ValueChanged<bool> onStatusChanged;
 
@@ -165,27 +199,23 @@ class StatusCard extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StatusCard> createState() => _StatusCardState();
-}
-
-class _StatusCardState extends State<StatusCard> {
-  @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
       color: Theme.of(context).colorScheme.surfaceVariant,
       child: ListTile(
         title: const Text('Status'),
-        subtitle: Text(widget.status ? 'Complete' : 'Not Complete'),
+        subtitle: Text(status ? 'Complete' : 'Not Complete'),
         trailing: IconButton(
-          icon: Icon(widget.status
-              ? Icons.check_circle_outline
-              : Icons.circle_outlined),
+          icon:
+              Icon(status ? Icons.check_circle_outline : Icons.circle_outlined),
           onPressed: () {
-            setState(() {
-              widget.onStatusChanged(!widget.status);
-            });
+            onStatusChanged(!status);
           },
+        ),
+        subtitleTextStyle: TextStyle(
+          fontSize: 14.0,
+          color: Theme.of(context).colorScheme.onBackground,
         ),
       ),
     );
@@ -210,6 +240,10 @@ class DescriptionTextFormField extends StatelessWidget {
         subtitle: TextFormField(
           controller: descriptionController,
           keyboardType: TextInputType.text,
+          style: TextStyle(
+            fontSize: 14.0,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
           decoration: const InputDecoration(
             hintText: 'Description',
             isDense: true,
@@ -286,6 +320,10 @@ class PriorityTextFormField extends StatelessWidget {
           showCursor: false,
           readOnly: true,
           onTap: () => openPriorityDialog(),
+          style: TextStyle(
+            fontSize: 14.0,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
           decoration: const InputDecoration(
             hintText: 'Priority',
             isDense: true,
@@ -327,6 +365,10 @@ class TitleTextFormField extends StatelessWidget {
         title: const Text('Title'),
         subtitle: TextFormField(
           controller: nameController,
+          style: TextStyle(
+            fontSize: 14.0,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
           decoration: const InputDecoration(
             hintText: 'Title',
             isDense: true,
@@ -377,10 +419,11 @@ class CategoryTextFormField extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: categories
                   .map((e) => ListTile(
-                      title: Text(e),
-                      onTap: () {
-                        Navigator.of(context).pop(e);
-                      }))
+                        title: Text(e),
+                        onTap: () {
+                          Navigator.of(context).pop(e);
+                        },
+                      ))
                   .toList(),
             ),
           );
@@ -401,6 +444,10 @@ class CategoryTextFormField extends StatelessWidget {
           showCursor: false,
           readOnly: true,
           onTap: () => openCategoryDialog(),
+          style: TextStyle(
+            fontSize: 14.0,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
           decoration: const InputDecoration(
             hintText: 'Category',
             isDense: true,
@@ -441,6 +488,10 @@ class DueDateTextFormField extends StatelessWidget {
       child: ListTile(
         title: const Text('Due Date'),
         subtitle: TextFormField(
+          style: TextStyle(
+            fontSize: 14.0,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
           controller: dueDateController,
           decoration: const InputDecoration(
             hintText: 'Due Date',
@@ -473,13 +524,11 @@ class DueDateTextFormField extends StatelessWidget {
               initialDate: DateTime.now(),
               firstDate: DateTime.now(),
               lastDate: DateTime(date.year + 10, date.month, date.day),
-            ).then(
-              (date) {
-                if (date != null) {
-                  dueDateController.text = DateFormat.yMMMd().format(date);
-                }
-              },
-            );
+            ).then((date) {
+              if (date != null) {
+                dueDateController.text = DateFormat.yMMMd().format(date);
+              }
+            });
           },
         ),
       ),

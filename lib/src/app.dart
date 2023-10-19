@@ -26,6 +26,7 @@ class TaskHubTheme {
   static ThemeData get appTheme {
     return ThemeData(
       useMaterial3: true,
+      brightness: Brightness.light,
       colorSchemeSeed: Colors.amber,
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         elevation: 0.0,
@@ -33,6 +34,10 @@ class TaskHubTheme {
         hoverElevation: 0.0,
         disabledElevation: 0.0,
         highlightElevation: 0.0,
+      ),
+      snackBarTheme: const SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        elevation: 0.0,
       ),
       inputDecorationTheme: InputDecorationTheme(
         fillColor: Colors.amber.shade50,

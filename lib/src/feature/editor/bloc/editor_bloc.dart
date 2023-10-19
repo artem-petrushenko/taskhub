@@ -27,14 +27,16 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
   }
 
   Future<void> _onUpdateTask(
-    EditorEvent event,
+    _UpdateTask event,
     Emitter<EditorState> emit,
   ) async {
     try {
+      emit(const _Loading());
       await _tasksRepository.updateTask(task: event.task);
       emit(_SuccessUpdate(task: event.task));
     } on Object catch (error) {
       emit(_Failure(error: error));
+      emit(const _Initial());
       rethrow;
     }
   }
@@ -44,10 +46,12 @@ class EditorBloc extends Bloc<EditorEvent, EditorState> {
     Emitter<EditorState> emit,
   ) async {
     try {
-      await _tasksRepository.deleteTask(taskId: event.task.taskId);
-      emit(_SuccessRemove(taskId: event.task.taskId));
+      emit(const _Loading());
+      await _tasksRepository.deleteTask(taskId: event.taskId);
+      emit(_SuccessRemove(taskId: event.taskId));
     } on Object catch (error) {
       emit(_Failure(error: error));
+      emit(const _Initial());
       rethrow;
     }
   }

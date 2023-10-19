@@ -36,7 +36,6 @@ class CreatorBloc extends Bloc<CreatorEvent, CreatorState> {
       emit(_Success(task: task));
     } on Object catch (error) {
       emit(_Failure(error: error));
-      await Future.delayed(const Duration(seconds: 1));
       emit(const _Initial());
       rethrow;
     }
