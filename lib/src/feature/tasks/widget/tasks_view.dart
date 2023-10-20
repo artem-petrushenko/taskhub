@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -79,33 +77,29 @@ class TasksView extends StatelessWidget {
                               },
                             );
                           },
-                          child: Card(
-                            elevation: 0.0,
-                            color: Theme.of(context).colorScheme.surfaceVariant,
-                            child: ListTile(
-                              title: Text(
-                                state.tasks[index].title,
-                                style: TextStyle(
-                                  decoration: state.tasks[index].completed
-                                      ? TextDecoration.lineThrough
-                                      : null,
-                                ),
+                          child: ListTile(
+                            title: Text(
+                              state.tasks[index].title,
+                              style: TextStyle(
+                                decoration: state.tasks[index].completed
+                                    ? TextDecoration.lineThrough
+                                    : null,
                               ),
-                              subtitle: Text(state.tasks[index].category),
-                              trailing: IconButton(
-                                onPressed: () {
-                                  HapticFeedback.vibrate();
-                                  TasksScope.updateTask(
-                                    context,
-                                    state.tasks[index].taskId,
-                                    !state.tasks[index].completed,
-                                  );
-                                },
-                                icon: Icon(
-                                  state.tasks[index].completed
-                                      ? Icons.check_circle_outline
-                                      : Icons.circle_outlined,
-                                ),
+                            ),
+                            subtitle: Text(state.tasks[index].category),
+                            trailing: IconButton(
+                              onPressed: () {
+                                HapticFeedback.vibrate();
+                                TasksScope.updateTask(
+                                  context,
+                                  state.tasks[index].taskId,
+                                  !state.tasks[index].completed,
+                                );
+                              },
+                              icon: Icon(
+                                state.tasks[index].completed
+                                    ? Icons.check_circle_outline
+                                    : Icons.circle_outlined,
                               ),
                             ),
                           ),
@@ -153,8 +147,8 @@ class TasksView extends StatelessWidget {
                       );
                       await FirebaseAuth.instance
                           .signInWithCredential(credential);
-                    } on Object catch (error) {
-                      log(error.toString());
+                    } on Object catch (error, stackTrace) {
+                      Error.throwWithStackTrace(error, stackTrace);
                     }
                   },
                   icon: const Icon(Icons.add)),

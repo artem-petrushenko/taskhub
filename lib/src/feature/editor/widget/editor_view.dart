@@ -198,24 +198,19 @@ class StatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      color: Theme.of(context).colorScheme.surfaceVariant,
-      child: ListTile(
-        title: const Text('Status'),
-        subtitle: Text(status ? 'Complete' : 'Not Complete'),
-        trailing: IconButton(
-          icon:
-              Icon(status ? Icons.check_circle_outline : Icons.circle_outlined),
-          onPressed: () {
-            HapticFeedback.vibrate();
-            onStatusChanged(!status);
-          },
-        ),
-        subtitleTextStyle: TextStyle(
-          fontSize: 14.0,
-          color: Theme.of(context).colorScheme.onBackground,
-        ),
+    return ListTile(
+      title: const Text('Status'),
+      subtitle: Text(status ? 'Complete' : 'Not Complete'),
+      trailing: IconButton(
+        icon: Icon(status ? Icons.check_circle_outline : Icons.circle_outlined),
+        onPressed: () {
+          HapticFeedback.vibrate();
+          onStatusChanged(!status);
+        },
+      ),
+      subtitleTextStyle: TextStyle(
+        fontSize: 14.0,
+        color: Theme.of(context).colorScheme.onBackground,
       ),
     );
   }
@@ -231,40 +226,36 @@ class DescriptionTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      color: Theme.of(context).colorScheme.surfaceVariant,
-      child: ListTile(
-        title: const Text('Description'),
-        subtitle: TextFormField(
-          controller: descriptionController,
-          keyboardType: TextInputType.text,
-          style: TextStyle(
-            fontSize: 14.0,
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
-          decoration: const InputDecoration(
-            hintText: 'Description',
-            isDense: true,
-            filled: false,
-            contentPadding: EdgeInsets.zero,
-            errorBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            focusedErrorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            border: InputBorder.none,
-          ),
-          maxLines: null,
-          textAlignVertical: TextAlignVertical.top,
-          maxLength: 1000,
-          validator: (String? value) {
-            if (value != null && value.isNotEmpty && value.length > 1000) {
-              return 'Description should not exceed 1000 characters.';
-            }
-            return null;
-          },
+    return ListTile(
+      title: const Text('Description'),
+      subtitle: TextFormField(
+        controller: descriptionController,
+        keyboardType: TextInputType.text,
+        style: TextStyle(
+          fontSize: 14.0,
+          color: Theme.of(context).colorScheme.onBackground,
         ),
+        decoration: const InputDecoration(
+          hintText: 'Description',
+          isDense: true,
+          filled: false,
+          contentPadding: EdgeInsets.zero,
+          errorBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          border: InputBorder.none,
+        ),
+        maxLines: null,
+        textAlignVertical: TextAlignVertical.top,
+        maxLength: 1000,
+        validator: (String? value) {
+          if (value != null && value.isNotEmpty && value.length > 1000) {
+            return 'Description should not exceed 1000 characters.';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -309,39 +300,35 @@ class PriorityTextFormField extends StatelessWidget {
       }
     }
 
-    return Card(
-      elevation: 0,
-      color: Theme.of(context).colorScheme.surfaceVariant,
-      child: ListTile(
-        title: const Text('Priority'),
-        subtitle: TextFormField(
-          controller: priorityController,
-          showCursor: false,
-          readOnly: true,
-          onTap: () => openPriorityDialog(),
-          style: TextStyle(
-            fontSize: 14.0,
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
-          decoration: const InputDecoration(
-            hintText: 'Priority',
-            isDense: true,
-            filled: false,
-            contentPadding: EdgeInsets.zero,
-            errorBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            focusedErrorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            border: InputBorder.none,
-          ),
-          validator: (String? value) {
-            if (value == null || value.isEmpty) {
-              return 'Priority is required.';
-            }
-            return null;
-          },
+    return ListTile(
+      title: const Text('Priority'),
+      subtitle: TextFormField(
+        controller: priorityController,
+        showCursor: false,
+        readOnly: true,
+        onTap: () => openPriorityDialog(),
+        style: TextStyle(
+          fontSize: 14.0,
+          color: Theme.of(context).colorScheme.onBackground,
         ),
+        decoration: const InputDecoration(
+          hintText: 'Priority',
+          isDense: true,
+          filled: false,
+          contentPadding: EdgeInsets.zero,
+          errorBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          border: InputBorder.none,
+        ),
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return 'Priority is required.';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -357,40 +344,36 @@ class TitleTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      color: Theme.of(context).colorScheme.surfaceVariant,
-      child: ListTile(
-        title: const Text('Title'),
-        subtitle: TextFormField(
-          controller: nameController,
-          style: TextStyle(
-            fontSize: 14.0,
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
-          decoration: const InputDecoration(
-            hintText: 'Title',
-            isDense: true,
-            filled: false,
-            contentPadding: EdgeInsets.zero,
-            errorBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            focusedErrorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            border: InputBorder.none,
-          ),
-          keyboardType: TextInputType.text,
-          maxLength: 100,
-          validator: (String? value) {
-            if (value == null || value.isEmpty) {
-              return 'Title is required.';
-            } else if (value.length > 100) {
-              return 'Title should not exceed 100 characters.';
-            }
-            return null;
-          },
+    return ListTile(
+      title: const Text('Title'),
+      subtitle: TextFormField(
+        controller: nameController,
+        style: TextStyle(
+          fontSize: 14.0,
+          color: Theme.of(context).colorScheme.onBackground,
         ),
+        decoration: const InputDecoration(
+          hintText: 'Title',
+          isDense: true,
+          filled: false,
+          contentPadding: EdgeInsets.zero,
+          errorBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          border: InputBorder.none,
+        ),
+        keyboardType: TextInputType.text,
+        maxLength: 100,
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return 'Title is required.';
+          } else if (value.length > 100) {
+            return 'Title should not exceed 100 characters.';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -433,39 +416,35 @@ class CategoryTextFormField extends StatelessWidget {
       }
     }
 
-    return Card(
-      elevation: 0,
-      color: Theme.of(context).colorScheme.surfaceVariant,
-      child: ListTile(
-        title: const Text('Category'),
-        subtitle: TextFormField(
-          controller: categoryController,
-          showCursor: false,
-          readOnly: true,
-          onTap: () => openCategoryDialog(),
-          style: TextStyle(
-            fontSize: 14.0,
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
-          decoration: const InputDecoration(
-            hintText: 'Category',
-            isDense: true,
-            filled: false,
-            contentPadding: EdgeInsets.zero,
-            errorBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            focusedErrorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            border: InputBorder.none,
-          ),
-          validator: (String? value) {
-            if (value == null || value.isEmpty) {
-              return 'Category is required.';
-            }
-            return null;
-          },
+    return ListTile(
+      title: const Text('Category'),
+      subtitle: TextFormField(
+        controller: categoryController,
+        showCursor: false,
+        readOnly: true,
+        onTap: () => openCategoryDialog(),
+        style: TextStyle(
+          fontSize: 14.0,
+          color: Theme.of(context).colorScheme.onBackground,
         ),
+        decoration: const InputDecoration(
+          hintText: 'Category',
+          isDense: true,
+          filled: false,
+          contentPadding: EdgeInsets.zero,
+          errorBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          border: InputBorder.none,
+        ),
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return 'Category is required.';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -481,55 +460,51 @@ class DueDateTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      color: Theme.of(context).colorScheme.surfaceVariant,
-      child: ListTile(
-        title: const Text('Due Date'),
-        subtitle: TextFormField(
-          style: TextStyle(
-            fontSize: 14.0,
-            color: Theme.of(context).colorScheme.onBackground,
-          ),
-          controller: dueDateController,
-          decoration: const InputDecoration(
-            hintText: 'Due Date',
-            isDense: true,
-            filled: false,
-            contentPadding: EdgeInsets.zero,
-            errorBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            focusedErrorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            border: InputBorder.none,
-          ),
-          showCursor: false,
-          readOnly: true,
-          validator: (String? value) {
-            if (value != null && value != '') {
-              final now = DateTime.now();
-              final selectedDate = DateFormat.yMMMd().parse(value);
-              if (selectedDate.isBefore(now)) {
-                return 'Due date must be in the future.';
-              }
-            }
-            return null;
-          },
-          onTap: () {
-            final date = DateTime.now();
-            showDatePicker(
-              context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime.now(),
-              lastDate: DateTime(date.year + 10, date.month, date.day),
-            ).then((date) {
-              if (date != null) {
-                dueDateController.text = DateFormat.yMMMd().format(date);
-              }
-            });
-          },
+    return ListTile(
+      title: const Text('Due Date'),
+      subtitle: TextFormField(
+        style: TextStyle(
+          fontSize: 14.0,
+          color: Theme.of(context).colorScheme.onBackground,
         ),
+        controller: dueDateController,
+        decoration: const InputDecoration(
+          hintText: 'Due Date',
+          isDense: true,
+          filled: false,
+          contentPadding: EdgeInsets.zero,
+          errorBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          border: InputBorder.none,
+        ),
+        showCursor: false,
+        readOnly: true,
+        validator: (String? value) {
+          if (value != null && value != '') {
+            final now = DateTime.now();
+            final selectedDate = DateFormat.yMMMd().parse(value);
+            if (selectedDate.isBefore(now)) {
+              return 'Due date must be in the future.';
+            }
+          }
+          return null;
+        },
+        onTap: () {
+          final date = DateTime.now();
+          showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime.now(),
+            lastDate: DateTime(date.year + 10, date.month, date.day),
+          ).then((date) {
+            if (date != null) {
+              dueDateController.text = DateFormat.yMMMd().format(date);
+            }
+          });
+        },
       ),
     );
   }
