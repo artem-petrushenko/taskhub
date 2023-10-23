@@ -12,5 +12,5 @@ abstract interface class TasksRepository {
 
   Future<void> deleteTask({required final String taskId});
 
-  Future<TaskModel> updateTask({required final TaskModel task});
+  Future<void> updateTask({required final TaskModel task});
 }

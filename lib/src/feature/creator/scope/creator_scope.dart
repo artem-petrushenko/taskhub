@@ -9,7 +9,7 @@ abstract class CreatorScope {
     return context.read<CreatorBloc>();
   }
 
-  static void removeTask(BuildContext context, TaskModel task) {
+  static void createTask(BuildContext context, TaskModel task) {
     of(context).add(CreatorEvent.createTask(task: task));
   }
 }

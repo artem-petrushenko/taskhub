@@ -47,10 +47,9 @@ class TasksRepositoryImpl implements TasksRepository {
   }
 
   @override
-  Future<TaskModel> updateTask({
+  Future<void> updateTask({
     required TaskModel task,
   }) async {
     await _tasksNetworkDataProviderImpl.updateTask(task: task);
-    return await _tasksNetworkDataProviderImpl.fetchTask(taskId: task.taskId);
   }
 }

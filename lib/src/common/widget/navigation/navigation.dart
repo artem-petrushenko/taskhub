@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -43,11 +44,12 @@ class Navigation {
 
 class ScreenFactory {
   Widget makeTasks() {
+    final firestore = FirebaseFirestore.instance;
     return BlocProvider<TasksBloc>(
       create: (_) => TasksBloc(
-        tasksRepository: const TasksRepositoryImpl(
+        tasksRepository: TasksRepositoryImpl(
           tasksNetworkDataProviderImpl: TasksNetworkDataProviderImpl(
-            cloudFirestore: CloudFirestore(),
+            cloudFirestore: CloudFirestore(firestore: firestore),
           ),
         ),
       )..add(const TasksEvent.fetchTasks()),
@@ -58,11 +60,12 @@ class ScreenFactory {
   Widget makeEditor({
     required TaskModel task,
   }) {
+    final firestore = FirebaseFirestore.instance;
     return BlocProvider<EditorBloc>(
       create: (_) => EditorBloc(
-        tasksRepository: const TasksRepositoryImpl(
+        tasksRepository: TasksRepositoryImpl(
           tasksNetworkDataProviderImpl: TasksNetworkDataProviderImpl(
-            cloudFirestore: CloudFirestore(),
+            cloudFirestore: CloudFirestore(firestore: firestore),
           ),
         ),
       ),
@@ -71,11 +74,12 @@ class ScreenFactory {
   }
 
   Widget makeCreator() {
+    final firestore = FirebaseFirestore.instance;
     return BlocProvider<CreatorBloc>(
       create: (_) => CreatorBloc(
-        tasksRepository: const TasksRepositoryImpl(
+        tasksRepository: TasksRepositoryImpl(
           tasksNetworkDataProviderImpl: TasksNetworkDataProviderImpl(
-            cloudFirestore: CloudFirestore(),
+            cloudFirestore: CloudFirestore(firestore: firestore),
           ),
         ),
       ),

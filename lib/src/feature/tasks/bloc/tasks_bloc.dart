@@ -26,7 +26,7 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
         removeTask: (event) => _onRemoveTask(event, emit),
         updateTask: (event) => _onUpdateTask(event, emit),
         addTask: (event) => _onAddTask(event, emit),
-        updateReturnTask: (event) => _updateReturnTask(event, emit),
+        updateReturnTask: (event) => _onUpdateReturnTask(event, emit),
       ),
       transformer: droppable(),
     );
@@ -138,7 +138,7 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
     }
   }
 
-  Future<void> _updateReturnTask(
+  Future<void> _onUpdateReturnTask(
     _UpdateReturnedTask event,
     Emitter<TasksState> emit,
   ) async {

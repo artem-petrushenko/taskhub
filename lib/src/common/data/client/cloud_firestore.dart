@@ -1,17 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CloudFirestore {
-  const CloudFirestore();
+  const CloudFirestore({
+    required FirebaseFirestore firestore,
+  }) : _firestore = firestore;
+
+  final FirebaseFirestore _firestore;
 
   Future<void> create({
     required final String collection,
     required final Map<String, dynamic> data,
   }) async {
     try {
-      final _firestore = FirebaseFirestore.instance;
       await _firestore.collection(collection).add(data);
-    } catch (e) {
-      throw Exception('Error creating document: $e');
+    } on Object catch (error, stackTrace) {
+      Error.throwWithStackTrace(error, stackTrace);
     }
   }
 
@@ -20,12 +23,9 @@ class CloudFirestore {
     required final String documentId,
   }) async {
     try {
-      final _firestore = FirebaseFirestore.instance;
-      DocumentSnapshot documentSnapshot =
-          await _firestore.collection(collection).doc(documentId).get();
-      return documentSnapshot;
-    } catch (e) {
-      throw Exception('Error reading document: $e');
+      return await _firestore.collection(collection).doc(documentId).get();
+    } on Object catch (error, stackTrace) {
+      Error.throwWithStackTrace(error, stackTrace);
     }
   }
 
@@ -35,10 +35,9 @@ class CloudFirestore {
     required final Map<String, dynamic> data,
   }) async {
     try {
-      final _firestore = FirebaseFirestore.instance;
       await _firestore.collection(collection).doc(documentId).update(data);
-    } catch (e) {
-      throw Exception('Error updating document: $e');
+    } on Object catch (error, stackTrace) {
+      Error.throwWithStackTrace(error, stackTrace);
     }
   }
 
@@ -47,10 +46,9 @@ class CloudFirestore {
     required final String documentId,
   }) async {
     try {
-      final _firestore = FirebaseFirestore.instance;
       await _firestore.collection(collection).doc(documentId).delete();
-    } catch (e) {
-      throw Exception('Error deleting document: $e');
+    } on Object catch (error, stackTrace) {
+      Error.throwWithStackTrace(error, stackTrace);
     }
   }
 }
