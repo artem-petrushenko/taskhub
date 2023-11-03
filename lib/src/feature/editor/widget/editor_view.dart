@@ -1,11 +1,11 @@
+import 'package:async_redux/async_redux.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:taskhub/src/common/model/task/task_model.dart';
 
-import 'package:taskhub/src/feature/editor/bloc/editor_bloc.dart';
+import 'package:taskhub/src/feature/editor/reducer/editor_reducer.dart';
 import 'package:taskhub/src/feature/editor/scope/editor_scope.dart';
 
 class EditorView extends StatefulWidget {
@@ -68,8 +68,9 @@ class _EditorViewState extends State<EditorView> {
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
-    return BlocListener<EditorBloc, EditorState>(
-      listener: (context, state) {
+    return StoreConnector<EditorState, EditorState>(
+      converter: (Store<EditorState> store) => store.state,
+      onDidChange: (_, store, state) {
         state.mapOrNull(
           successRemove: (state) {
             Navigator.pop(context, state.taskId);
@@ -77,111 +78,103 @@ class _EditorViewState extends State<EditorView> {
           successUpdate: (state) {
             Navigator.pop(context, state.task);
           },
-          failure: (state) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error.toString())),
-            );
-          },
         );
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.task.taskId),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Form(
-            key: formKey,
-            child: CustomScrollView(
-              slivers: [
-                SliverList(
-                  delegate: SliverChildListDelegate([
-                    TitleTextFormField(nameController: nameController),
-                    DescriptionTextFormField(
-                        descriptionController: descriptionController),
-                    DueDateTextFormField(dueDateController: dueDateController),
-                    PriorityTextFormField(
-                        priorityController: priorityController),
-                    CategoryTextFormField(
-                        categoryController: categoryController),
-                    StatusCard(
-                      status: status,
-                      onStatusChanged: (newStatus) {
-                        setState(() {
-                          status = newStatus;
-                        });
-                      },
-                    ),
-                    BlocBuilder<EditorBloc, EditorState>(
-                      builder: (context, state) {
-                        return Row(
-                          children: [
-                            Expanded(
-                              child: FilledButton.tonal(
-                                onPressed: state.mapOrNull(
-                                  initial: (state) => () {
-                                    HapticFeedback.vibrate();
-                                    if (formKey.currentState!.validate()) {
-                                      if (hasTaskChanged()) {
-                                        EditorScope.updateTask(
-                                          context,
-                                          widget.task.copyWith(
-                                            category: categoryController.text,
-                                            completed: status,
-                                            description:
-                                                descriptionController.text,
-                                            dueDate:
-                                                dueDateController.text != ''
-                                                    ? DateFormat.yMMMd().parse(
-                                                        dueDateController.text)
-                                                    : null,
-                                            priority: priorityController.text,
-                                            title: nameController.text,
-                                          ),
-                                        );
-                                      } else {
-                                        Navigator.pop(context);
-                                      }
+      builder: (BuildContext context, EditorState state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(widget.task.taskId),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Form(
+              key: formKey,
+              child: CustomScrollView(
+                slivers: [
+                  SliverList(
+                    delegate: SliverChildListDelegate([
+                      TitleTextFormField(nameController: nameController),
+                      DescriptionTextFormField(
+                          descriptionController: descriptionController),
+                      DueDateTextFormField(
+                          dueDateController: dueDateController),
+                      PriorityTextFormField(
+                          priorityController: priorityController),
+                      CategoryTextFormField(
+                          categoryController: categoryController),
+                      StatusCard(
+                        status: status,
+                        onStatusChanged: (newStatus) {
+                          setState(() {
+                            status = newStatus;
+                          });
+                        },
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: FilledButton.tonal(
+                              onPressed: state.mapOrNull(
+                                initial: (state) => () {
+                                  HapticFeedback.vibrate();
+                                  if (formKey.currentState!.validate()) {
+                                    if (hasTaskChanged()) {
+                                      EditorScope.updateTask(
+                                        context,
+                                        widget.task.copyWith(
+                                          category: categoryController.text,
+                                          completed: status,
+                                          description:
+                                              descriptionController.text,
+                                          dueDate: dueDateController.text != ''
+                                              ? DateFormat.yMMMd()
+                                                  .parse(dueDateController.text)
+                                              : null,
+                                          priority: priorityController.text,
+                                          title: nameController.text,
+                                        ),
+                                      );
+                                    } else {
+                                      Navigator.pop(context);
                                     }
-                                  },
+                                  }
+                                },
+                              ),
+                              child: const Text('Update'),
+                            ),
+                          ),
+                          const SizedBox(width: 16.0),
+                          Expanded(
+                            child: FilledButton.tonal(
+                              style: FilledButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.error,
+                              ),
+                              onPressed: state.mapOrNull(
+                                initial: (state) => () {
+                                  HapticFeedback.vibrate();
+                                  EditorScope.removeTask(
+                                      context, widget.task.taskId);
+                                },
+                              ),
+                              child: Text(
+                                'Remove',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onError,
                                 ),
-                                child: const Text('Update'),
                               ),
                             ),
-                            const SizedBox(width: 16.0),
-                            Expanded(
-                              child: FilledButton.tonal(
-                                style: FilledButton.styleFrom(
-                                  backgroundColor:
-                                      Theme.of(context).colorScheme.error,
-                                ),
-                                onPressed: state.mapOrNull(
-                                  initial: (state) => () {
-                                    HapticFeedback.vibrate();
-                                    EditorScope.removeTask(
-                                        context, widget.task.taskId);
-                                  },
-                                ),
-                                child: Text(
-                                  'Remove',
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.onError,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ]),
-                ),
-              ],
+                          ),
+                        ],
+                      ),
+                    ]),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

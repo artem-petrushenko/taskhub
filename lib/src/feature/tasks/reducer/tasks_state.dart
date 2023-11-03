@@ -1,4 +1,4 @@
-part of 'tasks_bloc.dart';
+part of 'tasks_reducer.dart';
 
 @freezed
 class TasksState with _$TasksState {

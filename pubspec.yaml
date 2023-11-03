@@ -45,6 +45,7 @@ dependencies:
   firebase_auth: ^4.10.0
   google_sign_in: ^6.1.5
   bloc_concurrency: ^0.2.2
+  async_redux: ^20.0.2
 
 dev_dependencies:
   flutter_test:

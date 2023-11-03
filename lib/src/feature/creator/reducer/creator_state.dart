@@ -1,4 +1,4 @@
-part of 'creator_bloc.dart';
+part of 'creator_reducer.dart';
 
 @freezed
 class CreatorState with _$CreatorState {
